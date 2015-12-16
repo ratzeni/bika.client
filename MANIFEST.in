@@ -1,0 +1,7 @@
+global-exclude *.swp *~ .gitignore
+
+include *.rst
+include setup.py
+
+graft bikaclient
+graft docs
