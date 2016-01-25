@@ -38,7 +38,8 @@ class BikaClient():
         return self._read(portal_type='Sample', query_params=params)
 
     def get_analysis_requests(self, params=None):
-        return self._read(portal_type='AnalysisRequest', query_params=params)
+        query_params = self._make_query_params(params)
+        return self._read(portal_type='AnalysisRequest', query_params=query_params )
 
     def get_arimports(self, params=None):
         return self._read(portal_type='ARImport', query_params=params)
@@ -76,11 +77,14 @@ class BikaClient():
         api_service = 'read'
         url = self._make_bika_url(service=api_service)
 
-        params = dict(
-                portal_type=portal_type,
-                page_size=0)
+        params = dict(portal_type=portal_type)
+
+        if 'page_size' not in params:
+            params['page_size'] = 0
+
         if query_params:
             params.update(query_params)
+
 
         resp = self._make_bika_request(url=url, params=params)
         return json.loads(resp)
@@ -96,6 +100,11 @@ class BikaClient():
         query_params = self._make_query_params(params)
         return self._create(obj_path=obj_path, obj_type='AnalysisRequest', query_params=query_params)
 
+    def create_worksheet(self, params=None):
+        obj_path = self._make_obj_path('worksheets')
+        query_params = self._make_query_params(params)
+        return self._create(obj_path=obj_path, obj_type='Worksheet', query_params=query_params)
+
     def _create(self, obj_path, obj_type, query_params=None):
         api_service = 'create'
         url = self._make_bika_url(service=api_service)
@@ -109,6 +118,43 @@ class BikaClient():
 
         if query_params:
             params.update(query_params)
+
+        resp = self._make_bika_request(url=url, params=params)
+        return json.loads(resp)
+
+    def get_manager_users(self):
+        params = dict(roles='LabManager')
+        query_params = self._make_query_params(params)
+        return self._get_users(query_params)
+
+    def get_analyst_users(self):
+        params = dict(roles='Analyst')
+        query_params = self._make_query_params(params)
+        return self._get_users(query_params)
+
+    def get_clerk_users(self):
+        params = dict(roles='LabClerk')
+        query_params = self._make_query_params(params)
+        return self._get_users(query_params)
+
+    def get_client_users(self):
+        params = dict(roles='Client')
+        query_params = self._make_query_params(params)
+        return self._get_users(query_params)
+
+    def get_users(self, params):
+        query_params = self._make_query_params(params)
+        return self._get_users(query_params)
+
+    def _get_users(self, query_params=None):
+        api_service = 'getusers'
+        url = self._make_bika_url(service=api_service)
+
+        params = dict()
+
+        if query_params:
+            params.update(query_params)
+
 
         resp = self._make_bika_request(url=url, params=params)
         return json.loads(resp)
@@ -225,6 +271,15 @@ class BikaClient():
                     portal_type = 'AnalysisService' if k in ['Services'] else k
                     portal_type = 'Contact' if portal_type in ['CCContact'] else portal_type
                     value = {"{}:list".format(k): "portal_type:{}|id:{}".format(portal_type, v)}
+                    params[k].append(value)
+
+        keywords_2_retrieve = ['roles']
+        for k in keywords_2_retrieve:
+            if k in params:
+                values = params[k].split('|')
+                params[k] = list()
+                for v in values:
+                    value = {"{}:list".format(k): "{}".format(v)}
                     params[k].append(value)
 
         keywords_2_retrieve = ['ids']
