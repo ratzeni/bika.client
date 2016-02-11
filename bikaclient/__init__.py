@@ -45,7 +45,8 @@ class BikaClient():
         return self._read(portal_type='ARImport', query_params=params)
 
     def get_batches(self, params=None):
-        return self._read(portal_type='Batch', query_params=params)
+        query_params = self._make_query_params(params)
+        return self._read(portal_type='Batch', query_params=query_params)
 
     def get_worksheets(self, params=None):
         return self._read(portal_type='Worksheet', query_params=params)
@@ -165,13 +166,25 @@ class BikaClient():
         query_params = self._make_query_params(params)
         return self._do_action_for(portal_type='Batch', action='close', query_params=query_params)
 
+    def close_worksheet(self, params=None):
+        query_params = self._make_query_params(params)
+        return self._do_action_for(portal_type='Worksheet', action='close', query_params=query_params)
+
     def open_batch(self, params=None):
         query_params = self._make_query_params(params)
         return self._do_action_for(portal_type='Batch', action='open', query_params=query_params)
 
+    def open_worksheet(self, params=None):
+        query_params = self._make_query_params(params)
+        return self._do_action_for(portal_type='Worksheet', action='open', query_params=query_params)
+
     def cancel_batch(self, params=None):
         query_params = self._make_query_params(params)
         return self._do_action_for(portal_type='Batch', action='cancel', query_params=query_params)
+
+    def cancel_worksheet(self, params=None):
+        query_params = self._make_query_params(params)
+        return self._do_action_for(portal_type='Worksheet', action='cancel', query_params=query_params)
 
     def cancel_analysis_request(self, params=None):
         query_params = self._make_query_params(params)
@@ -180,6 +193,10 @@ class BikaClient():
     def reinstate_batch(self, params=None):
         query_params = self._make_query_params(params)
         return self._do_action_for(portal_type='Batch', action='reinstate', query_params=query_params)
+
+    def reinstate_worksheet(self, params=None):
+        query_params = self._make_query_params(params)
+        return self._do_action_for(portal_type='Worksheet', action='reinstate', query_params=query_params)
 
     def reinstate_analysis_request(self, params=None):
         query_params = self._make_query_params(params)
@@ -282,7 +299,7 @@ class BikaClient():
                     value = {"{}:list".format(k): "{}".format(v)}
                     params[k].append(value)
 
-        keywords_2_retrieve = ['ids']
+        keywords_2_retrieve = ['ids','Subjects']
         for k in keywords_2_retrieve:
             if k in params:
                 values = params[k].split('|')
