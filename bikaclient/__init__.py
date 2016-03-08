@@ -28,6 +28,7 @@ class BikaClient():
     def is_error(self):
         return self.__error
 
+    # QUERYING
     def get_clients(self, params=None):
         return self._read(portal_type='Client', query_params=params)
 
@@ -57,10 +58,9 @@ class BikaClient():
     def get_price_list(self, params=None):
         return self._read(portal_type='PriceList', query_params=params)
 
-    def get_supply_order(self, params=None):
+    def get_supply_orders(self, params=None):
         return self._read(portal_type='SupplyOrder', query_params=params)
 
-    # BIKA SETUP
 
     def get_artemplates(self, params=None):
         return self._read(portal_type='ARTemplate', query_params=params)
@@ -123,6 +123,18 @@ class BikaClient():
         resp = self._make_bika_request(url=url, params=params)
         return json.loads(resp)
 
+    # REMOVING
+    def remove(self, params=None):
+        return self._remove(params=params)
+
+    def _remove(self, params=None):
+        api_service = 'remove'
+        url = self._make_bika_url(service=api_service)
+
+        resp = self._make_bika_request(url=url, params=params)
+        return json.loads(resp)
+
+    # USERS HANDLING
     def get_manager_users(self):
         params = dict(roles='LabManager')
         query_params = self._make_query_params(params)
@@ -143,6 +155,11 @@ class BikaClient():
         query_params = self._make_query_params(params)
         return self._get_users(query_params)
 
+    def get_admin_users(self):
+        params = dict(roles='Site Administrator')
+        query_params = self._make_query_params(params)
+        return self._get_users(query_params)
+
     def get_users(self, params):
         query_params = self._make_query_params(params)
         return self._get_users(query_params)
@@ -160,8 +177,8 @@ class BikaClient():
         resp = self._make_bika_request(url=url, params=params)
         return json.loads(resp)
 
-    # REVIEW STATE
 
+    # REVIEW STATE
     def close_batch(self, params=None):
         query_params = self._make_query_params(params)
         return self._do_action_for(portal_type='Batch', action='close', query_params=query_params)
@@ -299,7 +316,7 @@ class BikaClient():
                     value = {"{}:list".format(k): "{}".format(v)}
                     params[k].append(value)
 
-        keywords_2_retrieve = ['ids','Subjects']
+        keywords_2_retrieve = ['ids','Subjects', 'titles']
         for k in keywords_2_retrieve:
             if k in params:
                 values = params[k].split('|')
