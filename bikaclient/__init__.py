@@ -92,19 +92,24 @@ class BikaClient():
 
     # CREATING
     def create_batch(self, params=None):
-        obj_path = self._make_obj_path('batches')
+        obj_path = self._make_obj_path(obj_type='Batch')
         query_params = self._make_query_params(params)
         return self._create(obj_path=obj_path, obj_type='Batch', query_params=query_params)
 
     def create_analysis_request(self, params=None):
-        obj_path=None
+        obj_path=self._make_obj_path(obj_type='AnalysisRequest')
         query_params = self._make_query_params(params)
         return self._create(obj_path=obj_path, obj_type='AnalysisRequest', query_params=query_params)
 
     def create_worksheet(self, params=None):
-        obj_path = self._make_obj_path('worksheets')
+        obj_path = self._make_obj_path(obj_type='Worksheet')
         query_params = self._make_query_params(params)
         return self._create(obj_path=obj_path, obj_type='Worksheet', query_params=query_params)
+
+    def create_supply_order(self, params=None):
+        obj_path=self._make_obj_path(obj_type='SupplyOrder', params=params)
+        query_params = self._make_query_params(params)
+        return self._create(obj_path=obj_path, obj_type='SupplyOrder', query_params=query_params)
 
     def _create(self, obj_path, obj_type, query_params=None):
         api_service = 'create'
@@ -223,6 +228,18 @@ class BikaClient():
         query_params = self._make_query_params(params)
         return self._do_action_for(portal_type='AnalysisRequest', action='receive', query_params=query_params)
 
+    def activate_supply_order(self, params=None):
+        query_params = self._make_query_params(params)
+        return self._do_action_for(portal_type='SupplyOrder', action='activate', query_params=query_params)
+
+    def deactivate_supply_order(self, params=None):
+        query_params = self._make_query_params(params)
+        return self._do_action_for(portal_type='SupplyOrder', action='deactivate', query_params=query_params)
+
+    def dispatch_supply_order(self, params=None):
+        query_params = self._make_query_params(params)
+        return self._do_action_for(portal_type='SupplyOrder', action='dispatch', query_params=query_params)
+
     def submit(self, params=None):
         return self._do_action_for_many(action='submit', query_params=params)
 
@@ -290,6 +307,9 @@ class BikaClient():
         return json.loads(resp)
 
     def _make_query_params(self, params):
+        if 'ClientID' in params:
+            del params['ClientID']
+
         keywords_2_retrieve = ['Client', 'Service', 'SampleType', 'Contact','ContainerType', 'Batch']
         for k in keywords_2_retrieve:
             if k in params:
@@ -328,8 +348,17 @@ class BikaClient():
                 del params[k]
         return params
 
-    def _make_obj_path(self, folder):
-        return '/{}'.format(os.path.join(os.path.split(self.__url)[1], folder))
+    def _make_obj_path(self, obj_type=None, params=None):
+        folder = None
+        if obj_type in ["Batch"]:
+            folder = 'batches'
+        if obj_type in ['Worksheet']:
+            folder = 'worksheets'
+        if obj_type in ['SupplyOrder']:
+            folder = os.path.join('clients', params.get('ClientID', ''))
+        if folder:
+            return '/{}'.format(os.path.join(os.path.split(self.__url)[1], folder))
+        return None
 
     def _make_bika_url(self, service, is_login_service=False):
         prefix = '@@API' if not is_login_service else ''
