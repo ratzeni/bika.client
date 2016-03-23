@@ -225,8 +225,7 @@ class BikaClient():
         return self._do_action_for(portal_type='AnalysisRequest', action='reinstate', query_params=query_params)
 
     def receive_sample(self, params=None):
-        query_params = self._make_query_params(params)
-        return self._do_action_for(portal_type='AnalysisRequest', action='receive', query_params=query_params)
+        return self._do_action_for_many(action='receive', query_params=params)
 
     def activate_supply_order(self, params=None):
         query_params = self._make_query_params(params)
