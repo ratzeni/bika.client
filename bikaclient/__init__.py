@@ -61,6 +61,15 @@ class BikaClient():
     def get_supply_orders(self, params=None):
         return self._read(portal_type='SupplyOrder', query_params=params)
 
+    def get_lab_products(self, params=None):
+        if 'path' not in params:
+            params.update(dict(path=self._make_obj_path(obj_type='LabProduct')))
+        return self._read(portal_type=None, query_params=params)
+
+    def get_storage_locations(self, params=None):
+        if 'path' not in params:
+            params.update(dict(path=self._make_obj_path(obj_type='StorageLocation')))
+        return self._read(portal_type=None, query_params=params)
 
     def get_artemplates(self, params=None):
         return self._read(portal_type='ARTemplate', query_params=params)
@@ -74,14 +83,17 @@ class BikaClient():
     def get_sample_types(self, params=None):
         return self._read(portal_type='SampleType', query_params=params)
 
-    def _read(self, portal_type, query_params=None):
+    def _read(self, portal_type=None, query_params=None):
         api_service = 'read'
         url = self._make_bika_url(service=api_service)
 
-        params = dict(portal_type=portal_type)
+        params = dict()
+
+        if portal_type:
+            params.update(dict(portal_type=portal_type))
 
         if 'page_size' not in params:
-            params['page_size'] = 0
+            params.update(dict(page_size=0))
 
         if query_params:
             params.update(query_params)
@@ -110,6 +122,11 @@ class BikaClient():
         obj_path=self._make_obj_path(obj_type='SupplyOrder', params=params)
         query_params = self._make_query_params(params)
         return self._create(obj_path=obj_path, obj_type='SupplyOrder', query_params=query_params)
+
+    def create_lab_product(self, params=None):
+        obj_path = self._make_obj_path(obj_type='LabProduct', params=params)
+        query_params = self._make_query_params(params)
+        return self._create(obj_path=obj_path, obj_type='LabProduct', query_params=query_params)
 
     def _create(self, obj_path, obj_type, query_params=None):
         api_service = 'create'
@@ -239,6 +256,14 @@ class BikaClient():
         query_params = self._make_query_params(params)
         return self._do_action_for(portal_type='SupplyOrder', action='dispatch', query_params=query_params)
 
+    def activate_lab_product(self, params=None):
+        query_params = self._make_query_params(params)
+        return self._do_action_for(portal_type=None, action='activate', query_params=query_params)
+
+    def deactivate_lab_product(self, params=None):
+        query_params = self._make_query_params(params)
+        return self._do_action_for(portal_type=None, action='deactivate', query_params=query_params)
+
     def submit(self, params=None):
         return self._do_action_for_many(action='submit', query_params=params)
 
@@ -255,13 +280,16 @@ class BikaClient():
         return self._update_many(query_params=params)
 
     # low level methods
-    def _do_action_for(self, portal_type, action, query_params):
+    def _do_action_for(self, portal_type=None, action=None, query_params=None):
         api_service = 'doActionFor'
         url = self._make_bika_url(service=api_service)
 
-        params = dict(
-                portal_type=portal_type,
-                action=action)
+        params = dict()
+
+        if portal_type:
+            params.update(dict(portal_type=portal_type))
+
+        params.update(dict(action=action))
 
         if query_params:
             params.update(query_params)
@@ -269,7 +297,7 @@ class BikaClient():
         resp = self._make_bika_request(url=url, params=params)
         return json.loads(resp)
 
-    def _do_action_for_many(self, action, query_params):
+    def _do_action_for_many(self, action=None, query_params=None):
         api_service = 'doActionFor_many'
         url = self._make_bika_url(service=api_service)
 
@@ -355,6 +383,10 @@ class BikaClient():
             folder = 'worksheets'
         if obj_type in ['SupplyOrder']:
             folder = os.path.join('clients', params.get('ClientID', ''))
+        if obj_type in ['LabProduct']:
+            folder = os.path.join('bika_setup','bika_labproducts')
+        if obj_type in ['StorageLocation']:
+            folder = os.path.join('bika_setup', 'bika_storagelocations')
         if folder:
             return '/{}'.format(os.path.join(os.path.split(self.__url)[1], folder))
         return None
