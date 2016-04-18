@@ -273,6 +273,9 @@ class BikaClient():
     def publish(self, params=None):
         return self._do_action_for_many(action='publish', query_params=params)
 
+    def republish(self, params=None):
+        return self._do_action_for_many(action='republish', query_params=params)
+
     def update(self, params=None):
         return self._update(query_params=params)
 
