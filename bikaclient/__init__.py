@@ -202,24 +202,21 @@ class BikaClient():
 
     # REVIEW STATE
     def close_batch(self, params=None):
-        query_params = self._make_query_params(params)
-        return self._do_action_for(portal_type='Batch', action='close', query_params=query_params)
+        return self._do_action_for_many(action='close', query_params=params)
 
     def close_worksheet(self, params=None):
         query_params = self._make_query_params(params)
         return self._do_action_for(portal_type='Worksheet', action='close', query_params=query_params)
 
     def open_batch(self, params=None):
-        query_params = self._make_query_params(params)
-        return self._do_action_for(portal_type='Batch', action='open', query_params=query_params)
+        return self._do_action_for_many(action='open', query_params=params)
 
     def open_worksheet(self, params=None):
         query_params = self._make_query_params(params)
         return self._do_action_for(portal_type='Worksheet', action='open', query_params=query_params)
 
     def cancel_batch(self, params=None):
-        query_params = self._make_query_params(params)
-        return self._do_action_for(portal_type='Batch', action='cancel', query_params=query_params)
+        return self._do_action_for_many(action='cancel', query_params=params)
 
     def cancel_worksheet(self, params=None):
         query_params = self._make_query_params(params)
@@ -230,8 +227,7 @@ class BikaClient():
         return self._do_action_for(portal_type='AnalysisRequest', action='cancel', query_params=query_params)
 
     def reinstate_batch(self, params=None):
-        query_params = self._make_query_params(params)
-        return self._do_action_for(portal_type='Batch', action='reinstate', query_params=query_params)
+        return self._do_action_for_many(action='reinstate', query_params=params)
 
     def reinstate_worksheet(self, params=None):
         query_params = self._make_query_params(params)
