@@ -205,60 +205,49 @@ class BikaClient():
         return self._do_action_for_many(action='close', query_params=params)
 
     def close_worksheet(self, params=None):
-        query_params = self._make_query_params(params)
-        return self._do_action_for(portal_type='Worksheet', action='close', query_params=query_params)
+        return self._do_action_for_many(action='close', query_params=params)
 
     def open_batch(self, params=None):
         return self._do_action_for_many(action='open', query_params=params)
 
     def open_worksheet(self, params=None):
-        query_params = self._make_query_params(params)
-        return self._do_action_for(portal_type='Worksheet', action='open', query_params=query_params)
+        return self._do_action_for_many(action='open', query_params=params)
 
     def cancel_batch(self, params=None):
         return self._do_action_for_many(action='cancel', query_params=params)
 
     def cancel_worksheet(self, params=None):
-        query_params = self._make_query_params(params)
-        return self._do_action_for(portal_type='Worksheet', action='cancel', query_params=query_params)
+        return self._do_action_for_many(action='cancel', query_params=params)
 
     def cancel_analysis_request(self, params=None):
-        query_params = self._make_query_params(params)
-        return self._do_action_for(portal_type='AnalysisRequest', action='cancel', query_params=query_params)
+        return self._do_action_for_many(action='cancel', query_params=params)
 
     def reinstate_batch(self, params=None):
         return self._do_action_for_many(action='reinstate', query_params=params)
 
     def reinstate_worksheet(self, params=None):
-        query_params = self._make_query_params(params)
-        return self._do_action_for(portal_type='Worksheet', action='reinstate', query_params=query_params)
+        return self._do_action_for_many(action='reinstate', query_params=params)
 
     def reinstate_analysis_request(self, params=None):
-        query_params = self._make_query_params(params)
-        return self._do_action_for(portal_type='AnalysisRequest', action='reinstate', query_params=query_params)
+        return self._do_action_for_many(action='reinstate', query_params=params)
 
     def receive_sample(self, params=None):
         return self._do_action_for_many(action='receive', query_params=params)
 
     def activate_supply_order(self, params=None):
-        query_params = self._make_query_params(params)
-        return self._do_action_for(portal_type='SupplyOrder', action='activate', query_params=query_params)
+        return self._do_action_for_many(action='activate', query_params=params)
 
     def deactivate_supply_order(self, params=None):
-        query_params = self._make_query_params(params)
-        return self._do_action_for(portal_type='SupplyOrder', action='deactivate', query_params=query_params)
+        return self._do_action_for_many(action='deactivate', query_params=params)
 
     def dispatch_supply_order(self, params=None):
-        query_params = self._make_query_params(params)
-        return self._do_action_for(portal_type='SupplyOrder', action='dispatch', query_params=query_params)
+        return self._do_action_for_many(action='dispatch', query_params=params)
 
     def activate_lab_product(self, params=None):
-        query_params = self._make_query_params(params)
-        return self._do_action_for(portal_type=None, action='activate', query_params=query_params)
+        return self._do_action_for_many(action='activate', query_params=params)
 
     def deactivate_lab_product(self, params=None):
-        query_params = self._make_query_params(params)
-        return self._do_action_for(portal_type=None, action='deactivate', query_params=query_params)
+        return self._do_action_for_many(action='deactivate', query_params=params)
 
     def submit(self, params=None):
         return self._do_action_for_many(action='submit', query_params=params)
