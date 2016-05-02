@@ -124,8 +124,6 @@ class BikaClient():
             return result['objects']
         return list()
 
-
-
     # CREATING
     def create_batch(self, params=None):
         obj_path = self._make_obj_path(obj_type='Batch')
