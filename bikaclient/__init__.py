@@ -40,7 +40,7 @@ class BikaClient():
 
     def get_analysis_requests(self, params=None):
         query_params = self._make_query_params(params)
-        return self._read(portal_type='AnalysisRequest', query_params=query_params )
+        return self._read(portal_type='AnalysisRequest', query_params=query_params)
 
     def get_arimports(self, params=None):
         return self._read(portal_type='ARImport', query_params=params)
@@ -98,9 +98,33 @@ class BikaClient():
         if query_params:
             params.update(query_params)
 
-
         resp = self._make_bika_request(url=url, params=params)
         return json.loads(resp)
+
+    # HIGH LEVEL QUERYING
+    def query_analysis_request(self, params=dict(id=None, client_sample_id=None)):
+
+        result = self.get_analysis_requests(params)
+
+        if 'client_sample_id' in params and params['client_sample_id']:
+            return [ar for ar in self._format_result(result) if 'ClientSampleID' in ar and params['client_sample_id'] == ar['ClientSampleID']]
+
+        return self._format_result(result)
+
+    def get_analysis_request_byID(self, id=None):
+        result = self.get_analysis_requests(params=dict(id=id))
+        return self._format_result(result)
+
+    def get_analysis_request_byCSID(self, csid=None):
+        analysis_requests = self.get_analysis_requests(dict())
+        return [ar for ar in self._format_result(analysis_requests) if 'ClientSampleID' in ar and csid == ar['ClientSampleID']]
+
+    def _format_result(self, result=dict()):
+        if 'objects' in result:
+            return result['objects']
+        return list()
+
+
 
     # CREATING
     def create_batch(self, params=None):
