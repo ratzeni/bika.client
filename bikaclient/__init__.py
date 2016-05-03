@@ -102,7 +102,21 @@ class BikaClient():
         return json.loads(resp)
 
     # HIGH LEVEL QUERYING
-    def query_analysis_request(self, params=dict(id=None, client_sample_id=None)):
+    def query_analysis_request(self, params=dict(id=None, client_sample_id=None, review_state=None, batch_id=None)):
+
+        if 'review_state' in params and params['review_state']:
+            if 'active' in [params['review_state']]:
+                params.update(dict(Subjects='sample_due|sample_received|to_be_verified|verified|published'))
+                del params['review_state']
+            elif 'published' in [params['review_state']]:
+                pass
+            else:
+                params.update(dict(Subject=params['review_state']))
+                del params['review_state']
+
+        if 'batch_id' in params and params['batch_id']:
+            params.update(dict(title=params['batch_id']))
+            del params['batch_id']
 
         result = self.get_analysis_requests(params)
 
@@ -110,14 +124,6 @@ class BikaClient():
             return [ar for ar in self._format_result(result) if 'ClientSampleID' in ar and params['client_sample_id'] == ar['ClientSampleID']]
 
         return self._format_result(result)
-
-    def get_analysis_request_byID(self, id=None):
-        result = self.get_analysis_requests(params=dict(id=id))
-        return self._format_result(result)
-
-    def get_analysis_request_byCSID(self, csid=None):
-        analysis_requests = self.get_analysis_requests(dict())
-        return [ar for ar in self._format_result(analysis_requests) if 'ClientSampleID' in ar and csid == ar['ClientSampleID']]
 
     def _format_result(self, result=dict()):
         if 'objects' in result:
