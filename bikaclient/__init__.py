@@ -2,6 +2,7 @@ import os
 import urllib
 import urllib2
 import json
+import datetime
 
 class BikaClient():
     def __init__(self, host='http://localhost:8080/Plone', username='admin', password='secret'):
@@ -121,7 +122,8 @@ class BikaClient():
         result = self.get_analysis_requests(params)
 
         if 'client_sample_id' in params and params['client_sample_id']:
-            return [ar for ar in self._format_result(result) if 'ClientSampleID' in ar and params['client_sample_id'] == ar['ClientSampleID']]
+            return [ar for ar in self._format_result(result) if
+                    'ClientSampleID' in ar and params['client_sample_id'] == ar['ClientSampleID']]
 
         return self._format_result(result)
 
@@ -137,7 +139,7 @@ class BikaClient():
         return self._create(obj_path=obj_path, obj_type='Batch', query_params=query_params)
 
     def create_analysis_request(self, params=None):
-        obj_path=self._make_obj_path(obj_type='AnalysisRequest')
+        obj_path = self._make_obj_path(obj_type='AnalysisRequest')
         query_params = self._make_query_params(params)
         return self._create(obj_path=obj_path, obj_type='AnalysisRequest', query_params=query_params)
 
@@ -147,7 +149,7 @@ class BikaClient():
         return self._create(obj_path=obj_path, obj_type='Worksheet', query_params=query_params)
 
     def create_supply_order(self, params=None):
-        obj_path=self._make_obj_path(obj_type='SupplyOrder', params=params)
+        obj_path = self._make_obj_path(obj_type='SupplyOrder', params=params)
         query_params = self._make_query_params(params)
         return self._create(obj_path=obj_path, obj_type='SupplyOrder', query_params=query_params)
 
@@ -162,10 +164,10 @@ class BikaClient():
 
         if obj_path:
             params = dict(
-                    obj_path=obj_path,
-                    obj_type=obj_type)
+                obj_path=obj_path,
+                obj_type=obj_type)
         else:
-             params = dict(obj_type=obj_type)
+            params = dict(obj_type=obj_type)
 
         if query_params:
             params.update(query_params)
@@ -223,10 +225,8 @@ class BikaClient():
         if query_params:
             params.update(query_params)
 
-
         resp = self._make_bika_request(url=url, params=params)
         return json.loads(resp)
-
 
     # REVIEW STATE
     def close_batch(self, params=None):
@@ -295,6 +295,49 @@ class BikaClient():
     def update_many(self, params=None):
         return self._update_many(query_params=params)
 
+    # HIGH LEVEL REVIEW STATE
+    def submit_analyses(self, paths=list(), result=1):
+
+        def _make_params(_paths=list(), _result=1):
+            input_values = dict()
+            for path in _paths:
+                input_values["{}".format(path)] = dict(Result=str(_result))
+            return dict(input_values=json.dumps(input_values))
+
+        params = _make_params(_paths=paths, _result=result)
+        update =  self.update_many(params=params)
+
+        if 'message' in update:
+            return update
+
+        params = self._make_action_params(paths)
+        return self.submit(params=params)
+
+
+    def verify_analyses(self, paths=list()):
+        params = self._make_action_params(paths)
+        return self.verify(params=params)
+
+    def publish_analyses(self, paths=list()):
+        params = self._make_action_params(paths)
+        return self.publish(params=params)
+
+    def publish_analysis_requests(self, paths=list()):
+        def _make_params(_paths=list()):
+            input_values = dict()
+            for path in _paths:
+                input_values["{}".format(path)] = dict(subject='published', DatePublished=datetime.date.today().strftime("%y-%m-%d"))
+            return dict(input_values=json.dumps(input_values))
+
+        params = _make_params(_paths=paths)
+        update = self.update_many(params=params)
+
+        if 'message' in update:
+            return update
+
+        params = self._make_action_params(paths)
+        return self.publish(params=params)
+
     # low level methods
     def _do_action_for(self, portal_type=None, action=None, query_params=None):
         api_service = 'doActionFor'
@@ -353,7 +396,7 @@ class BikaClient():
         if 'ClientID' in params:
             del params['ClientID']
 
-        keywords_2_retrieve = ['Client', 'Service', 'SampleType', 'Contact','ContainerType', 'Batch']
+        keywords_2_retrieve = ['Client', 'Service', 'SampleType', 'Contact', 'ContainerType', 'Batch']
         for k in keywords_2_retrieve:
             if k in params:
                 portal_type = 'AnalysisService' if k in ['Service'] else k
@@ -379,7 +422,7 @@ class BikaClient():
                     value = {"{}:list".format(k): "{}".format(v)}
                     params[k].append(value)
 
-        keywords_2_retrieve = ['ids','Subjects', 'titles']
+        keywords_2_retrieve = ['ids', 'Subjects', 'titles']
         for k in keywords_2_retrieve:
             if k in params:
                 values = params[k].split('|')
@@ -391,6 +434,10 @@ class BikaClient():
                 del params[k]
         return params
 
+    def _make_action_params(self, paths=list()):
+        f = [path for path in paths]
+        return dict(f=json.dumps(f))
+
     def _make_obj_path(self, obj_type=None, params=None):
         folder = None
         if obj_type in ["Batch"]:
@@ -400,7 +447,7 @@ class BikaClient():
         if obj_type in ['SupplyOrder']:
             folder = os.path.join('clients', params.get('ClientID', ''))
         if obj_type in ['LabProduct']:
-            folder = os.path.join('bika_setup','bika_labproducts')
+            folder = os.path.join('bika_setup', 'bika_labproducts')
         if obj_type in ['StorageLocation']:
             folder = os.path.join('bika_setup', 'bika_storagelocations')
         if folder:
@@ -437,8 +484,8 @@ class BikaClient():
         url = urllib.urlencode(params)
 
         for p in params_list:
-            for k,v in p.iteritems():
-                url = "{}&{}".format(url,urllib.urlencode(v))
+            for k, v in p.iteritems():
+                url = "{}&{}".format(url, urllib.urlencode(v))
 
         return url
 
@@ -447,5 +494,3 @@ class BikaClient():
 
     def __set_error(self):
         self.__error = True
-
-
