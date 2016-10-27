@@ -319,8 +319,8 @@ class BikaClient():
 
     def publish_analyses(self, paths=list()):
         return paths
-        params = self._make_action_params(paths)
-        return self.publish(params=params)
+        #params = self._make_action_params(paths)
+        #return self.publish(params=params)
 
     def publish_analysis_requests(self, paths=list()):
         def _make_params(_paths=list()):
