@@ -365,6 +365,7 @@ class BikaClient():
         if query_params:
             params.update(query_params)
 
+        return dict(url=url, params=params)
         resp = self._make_bika_request(url=url, params=params)
         return json.loads(resp)
 
