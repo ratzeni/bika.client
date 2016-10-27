@@ -318,6 +318,7 @@ class BikaClient():
         return self.verify(params=params)
 
     def publish_analyses(self, paths=list()):
+        return paths
         params = self._make_action_params(paths)
         return self.publish(params=params)
 
