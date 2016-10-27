@@ -303,16 +303,15 @@ class BikaClient():
             for path in _paths:
                 input_values["{}".format(path)] = dict(Result=str(_result))
             return dict(input_values=json.dumps(input_values))
-
+        return paths
         params = _make_params(_paths=paths, _result=result)
-        update =  self.update_many(params=params)
+        update = self.update_many(params=params)
 
         if 'message' in update:
             return update
 
         params = self._make_action_params(paths)
         return self.submit(params=params)
-
 
     def verify_analyses(self, paths=list()):
         params = self._make_action_params(paths)
