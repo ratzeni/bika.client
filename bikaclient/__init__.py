@@ -321,8 +321,8 @@ class BikaClient():
         ret = list()
         for p in paths:
             params = dict(obj_path=str(p))
-            res = self._do_action_for(action='publish', query_params=params)
-            ret.extend(res)
+            res = self._do_action_for(action='publish', query_params=self._make_query_params(params))
+            return res
         return ret
         #params = self._make_action_params(paths)
         #return self.publish(params=params)
