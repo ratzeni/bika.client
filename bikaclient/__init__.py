@@ -329,14 +329,16 @@ class BikaClient():
                 input_values["{}".format(path)] = dict(subject='published', DatePublished=datetime.date.today().strftime("%y-%m-%d"))
             return dict(input_values=json.dumps(input_values))
 
+        params = self._make_action_params(paths)
+        publish = self.publish(params=params)
+
+        if 'message' in publish:
+            return publish
+
         params = _make_params(_paths=paths)
         update = self.update_many(params=params)
 
-        if 'message' in update:
-            return update
-
-        params = self._make_action_params(paths)
-        return self.publish(params=params)
+        return update
 
     # low level methods
     def _do_action_for(self, portal_type=None, action=None, query_params=None):
