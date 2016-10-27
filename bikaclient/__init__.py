@@ -296,7 +296,7 @@ class BikaClient():
         return self._update_many(query_params=params)
 
     # HIGH LEVEL REVIEW STATE
-    def submit_analyses(self, paths=list(), result=1):
+    def submit_analyses(self, paths, result=1):
 
         def _make_params(_paths=list(), _result=1):
             input_values = dict()
@@ -313,14 +313,13 @@ class BikaClient():
         params = self._make_action_params(paths)
         return self.submit(params=params)
 
-    def verify_analyses(self, paths=list()):
+    def verify_analyses(self, paths):
         params = self._make_action_params(paths)
         return self.verify(params=params)
 
-    def publish_analyses(self, paths=list()):
-        return paths
-        #params = self._make_action_params(paths)
-        #return self.publish(params=params)
+    def publish_analyses(self, paths):
+        params = self._make_action_params(paths)
+        return self.publish(params=params)
 
     def publish_analysis_requests(self, paths=list()):
         def _make_params(_paths=list()):
