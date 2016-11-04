@@ -318,7 +318,6 @@ class BikaClient():
         return self.verify(params=params)
 
     def publish_analyses(self, paths):
-        paths=[paths.pop()]
         params = self._make_action_params(paths)
         return self.publish(params=params)
 
@@ -339,6 +338,11 @@ class BikaClient():
         update = self.update_many(params=params)
 
         return update
+
+    def close_batches(self, paths):
+        params = self._make_action_params(paths)
+        return self.close_batch(params=params)
+
 
     # low level methods
     def _do_action_for(self, portal_type=None, action=None, query_params=None):
