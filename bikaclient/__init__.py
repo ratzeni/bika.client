@@ -51,7 +51,8 @@ class BikaClient():
         return self._read(portal_type='Batch', query_params=query_params)
 
     def get_worksheets(self, params=None):
-        return self._read(portal_type='Worksheet', query_params=params)
+        query_params = self._make_query_params(params)
+        return self._read(portal_type='Worksheet', query_params=query_params)
 
     def get_invoices(self, params=None):
         return self._read(portal_type='Invoice', query_params=params)
@@ -173,7 +174,6 @@ class BikaClient():
             del params['id']
 
         result = self.get_worksheets(params)
-
         return self._format_result(result)
 
     def _format_result(self, result=dict()):
@@ -406,6 +406,18 @@ class BikaClient():
 
         return update
 
+    def close_worksheets(self, paths):
+        def _make_params(_paths=list()):
+            input_values = dict()
+            for path in _paths:
+                input_values["{}".format(path)] = dict(subject='closed')
+            return dict(input_values=json.dumps(input_values))
+
+        params = _make_params(_paths=paths)
+        update = self.update_many(params=params)
+
+        return update
+
     # low level methods
     def _do_action_for(self, portal_type=None, action=None, query_params=None):
         api_service = 'doActionFor'
@@ -490,7 +502,7 @@ class BikaClient():
                     value = {"{}:list".format(k): "{}".format(v)}
                     params[k].append(value)
 
-        keywords_2_retrieve = ['ids', 'Subjects', 'titles']
+        keywords_2_retrieve = ['ids', 'Subjects', 'titles', 'paths']
         for k in keywords_2_retrieve:
             if k in params:
                 values = params[k].split('|')
