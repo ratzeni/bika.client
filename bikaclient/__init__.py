@@ -119,11 +119,60 @@ class BikaClient():
             params.update(dict(title=params['batch_id']))
             del params['batch_id']
 
+        if 'id' in params and params['id'] and isinstance(params['id'], list) and len(params['id']) > 0:
+            params.update(dict(ids="|".join(params['id'])))
+            del params['id']
+
         result = self.get_analysis_requests(params)
 
         if 'client_sample_id' in params and params['client_sample_id']:
             return [ar for ar in self._format_result(result) if
                     'ClientSampleID' in ar and params['client_sample_id'] == ar['ClientSampleID']]
+
+        return self._format_result(result)
+
+    def query_batches(self, params=dict(id=None, client_id=None, review_state=None)):
+
+        if 'review_state' in params and params['review_state']:
+            if 'all' in [params['review_state']]:
+                params.update(dict(Subjects='open|closed|cancelled'))
+                del params['review_state']
+            else:
+                params.update(dict(Subject=params['review_state']))
+                del params['review_state']
+
+        if 'id' in params and params['id'] and isinstance(params['id'], list) and len(params['id']) > 0:
+            params.update(dict(ids="|".join(params['id'])))
+            del params['id']
+
+        result = self.get_batches(params)
+
+        if 'client_id' in params and params['client_id']:
+            clients = self.get_clients(dict(id=params['client_id']))
+            clients = self._format_result(clients)
+
+            client = clients.pop() if len(clients) > 0 else list()
+
+            return [b for b in self._format_result(result) if
+                    'Client' in b and client['Name'] == b['Client']]
+
+        return self._format_result(result)
+
+    def query_worksheets(self, params=dict(id=None, review_state=None)):
+
+        if 'review_state' in params and params['review_state']:
+            if 'all' in [params['review_state']]:
+                params.update(dict(Subjects='open|closed|cancelled'))
+                del params['review_state']
+            else:
+                params.update(dict(Subject=params['review_state']))
+                del params['review_state']
+
+        if 'id' in params and params['id'] and isinstance(params['id'], list) and len(params['id']) > 0:
+            params.update(dict(ids="|".join(params['id'])))
+            del params['id']
+
+        result = self.get_worksheets(params)
 
         return self._format_result(result)
 
