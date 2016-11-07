@@ -416,6 +416,9 @@ class BikaClient():
         params = _make_params(_paths=paths)
         update = self.update_many(params=params)
 
+        params = self._make_action_params(paths)
+        close = self.close_worksheet(params=params)
+
         return update
 
     # low level methods
