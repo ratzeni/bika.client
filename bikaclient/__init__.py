@@ -340,9 +340,22 @@ class BikaClient():
         return update
 
     def close_batches(self, paths):
-        params = self._make_action_params(paths)
-        return self.close_batch(params=params)
+        def _make_params(_paths=list()):
+            input_values = dict()
+            for path in _paths:
+                input_values["{}".format(path)] = dict(subject='closed')
+            return dict(input_values=json.dumps(input_values))
 
+        params = self._make_action_params(paths)
+        close = self.close_batch(params=params)
+
+        if 'message' in close:
+            return close
+
+        params = _make_params(_paths=paths)
+        update = self.update_many(params=params)
+
+        return update
 
     # low level methods
     def _do_action_for(self, portal_type=None, action=None, query_params=None):
