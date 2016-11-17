@@ -1,11 +1,11 @@
 from setuptools import setup
 
 AuthorInfo = (
-    ("Atzeni Rossano", "razteni@crs4.it"),
+    ("Atzeni Rossano", "ratzeni@crs4.it"),
 )
 
 setup(name = "bikaclient",
-      version = '0.1',
+      version = '0.2',
       description = "client package for bika lims",
       author = ",".join(a[0] for a in AuthorInfo),
       author_email = ",".join("<%s>" % a[1] for a in AuthorInfo),
