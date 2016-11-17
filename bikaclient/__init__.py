@@ -207,6 +207,26 @@ class BikaClient():
         query_params = self._make_query_params(params)
         return self._create(obj_path=obj_path, obj_type='LabProduct', query_params=query_params)
 
+    def create_container_type(self, params=None):
+        obj_path = self._make_obj_path(obj_type='ContainerType', params=params)
+        query_params = self._make_query_params(params)
+        return self._create(obj_path=obj_path, obj_type='ContainerType', query_params=query_params)
+
+    def create_sample_type(self, params=None):
+        obj_path = self._make_obj_path(obj_type='SampleType', params=params)
+        query_params = self._make_query_params(params)
+        return self._create(obj_path=obj_path, obj_type='SampleType', query_params=query_params)
+
+    def create_instrument_type(self, params=None):
+        obj_path = self._make_obj_path(obj_type='InstrumentType', params=params)
+        query_params = self._make_query_params(params)
+        return self._create(obj_path=obj_path, obj_type='InstrumentType', query_params=query_params)
+
+    def create_analysis_category(self, params=None):
+        obj_path = self._make_obj_path(obj_type='AnalysisCategory', params=params)
+        query_params = self._make_query_params(params)
+        return self._create(obj_path=obj_path, obj_type='AnalysisCategory', query_params=query_params)
+
     def _create(self, obj_path, obj_type, query_params=None):
         api_service = 'create'
         url = self._make_bika_url(service=api_service)
@@ -479,10 +499,11 @@ class BikaClient():
         if 'ClientID' in params:
             del params['ClientID']
 
-        keywords_2_retrieve = ['Client', 'Service', 'SampleType', 'Contact', 'ContainerType', 'Batch']
+        keywords_2_retrieve = ['Client', 'Service', 'SampleType', 'Contact', 'ContainerType','Category','Batch']
         for k in keywords_2_retrieve:
             if k in params:
                 portal_type = 'AnalysisService' if k in ['Service'] else k
+                portal_type = 'AnalysisCategory' if k in ['Category'] else k
                 params[k] = "portal_type:{}|id:{}".format(portal_type, params[k])
 
         keywords_2_retrieve = ['Services', 'CCContact']
@@ -533,6 +554,10 @@ class BikaClient():
             folder = os.path.join('bika_setup', 'bika_labproducts')
         if obj_type in ['StorageLocation']:
             folder = os.path.join('bika_setup', 'bika_storagelocations')
+        if obj_type in ['ContainerType']:
+            folder = os.path.join('bika_setup', 'bika_containertypes')
+        if obj_type in ['InstrumentType']:
+            folder = os.path.join('bika_setup', 'bika_instrumenttypes')
         if folder:
             return '/{}'.format(os.path.join(os.path.split(self.__url)[1], folder))
         return None
