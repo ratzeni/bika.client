@@ -4,6 +4,7 @@ import urllib2
 import json
 import datetime
 
+
 class BikaClient():
     def __init__(self, host='http://localhost:8080/Plone', username='admin', password='secret'):
         self.__url = host
@@ -226,6 +227,11 @@ class BikaClient():
         obj_path = self._make_obj_path(obj_type='AnalysisCategory', params=params)
         query_params = self._make_query_params(params)
         return self._create(obj_path=obj_path, obj_type='AnalysisCategory', query_params=query_params)
+
+    def create_analysis_service(self, params=None):
+        obj_path = self._make_obj_path(obj_type='AnalysisService', params=params)
+        query_params = self._make_query_params(params)
+        return self._create(obj_path=obj_path, obj_type='AnalysisService', query_params=query_params)
 
     def _create(self, obj_path, obj_type, query_params=None):
         api_service = 'create'
@@ -558,6 +564,12 @@ class BikaClient():
             folder = os.path.join('bika_setup', 'bika_containertypes')
         if obj_type in ['InstrumentType']:
             folder = os.path.join('bika_setup', 'bika_instrumenttypes')
+        if obj_type in ['SampleType']:
+            folder = os.path.join('bika_setup', 'bika_sampletypes')
+        if obj_type in ['AnalysisCategory']:
+            folder = os.path.join('bika_setup', 'bika_analysiscategories')
+        if obj_type in ['AnalysisService']:
+            folder = os.path.join('bika_setup', 'bika_analysisservices')
         if folder:
             return '/{}'.format(os.path.join(os.path.split(self.__url)[1], folder))
         return None
