@@ -105,7 +105,11 @@ class BikaClient():
         return json.loads(resp)
 
     # HIGH LEVEL QUERYING
-    def query_analysis_request(self, params=dict(id=None, client_sample_id=None, review_state=None, batch_id=None)):
+    def query_analysis_request(self, params=dict(id=None,
+                                                 client_sample_id=None,
+                                                 review_state=None,
+                                                 batch_id=None,
+                                                 analysis_service_id=None)):
 
         if 'review_state' in params and params['review_state']:
             if 'active' in [params['review_state']]:
@@ -125,13 +129,19 @@ class BikaClient():
             params.update(dict(ids="|".join(params['id'])))
             del params['id']
 
-        result = self.get_analysis_requests(params)
+        analysis_requests = self.get_analysis_requests(params)
+
+        result = self._format_result(analysis_requests)
 
         if 'client_sample_id' in params and params['client_sample_id']:
-            return [ar for ar in self._format_result(result) if
-                    'ClientSampleID' in ar and params['client_sample_id'] == ar['ClientSampleID']]
+            result = [ar for ar in result if
+                      'ClientSampleID' in ar and params['client_sample_id'] == ar['ClientSampleID']]
 
-        return self._format_result(result)
+        if 'analysis_service_id' in params and params['analysis_service_id']:
+            result = [ar for ar in result if
+                      'Analyses' in ar and params['analysis_service_id'] in [a['id'] for a in ar['Analyses']]]
+
+        return result
 
     def query_batches(self, params=dict(id=None, client_id=None, review_state=None)):
 
@@ -352,6 +362,12 @@ class BikaClient():
     def deactivate_lab_product(self, params=None):
         return self._do_action_for_many(action='deactivate', query_params=params)
 
+    def activate_client(self, params=None):
+        return self._do_action_for_many(action='activate', query_params=params)
+
+    def deactivate_client(self, params=None):
+        return self._do_action_for_many(action='deactivate', query_params=params)
+
     def submit(self, params=None):
         return self._do_action_for_many(action='submit', query_params=params)
 
@@ -505,6 +521,7 @@ class BikaClient():
         if 'ClientID' in params:
             del params['ClientID']
 
+        keywords_2_retrieve = ['Client', 'Service', 'SampleType', 'Contact', 'ContainerType','Category','Batch']
         keywords_2_retrieve = ['Client', 'Service', 'SampleType', 'Contact', 'ContainerType','Category','Batch']
         for k in keywords_2_retrieve:
             if k in params:
