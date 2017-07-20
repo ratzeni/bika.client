@@ -193,6 +193,16 @@ class BikaClient():
         return list()
 
     # CREATING
+    def create_client(self, params=None):
+        obj_path = self._make_obj_path(obj_type='Client')
+        query_params = self._make_query_params(params, remove_client_id=False)
+        return self._create(obj_path=obj_path, obj_type='Client', query_params=query_params)
+
+    def create_contact(self, params=None):
+        obj_path = self._make_obj_path(obj_type='Contact',  params=params)
+        query_params = self._make_query_params(params)
+        return self._create(obj_path=obj_path, obj_type='Contact', query_params=query_params)
+
     def create_batch(self, params=None):
         obj_path = self._make_obj_path(obj_type='Batch')
         query_params = self._make_query_params(params)
@@ -517,8 +527,8 @@ class BikaClient():
         resp = self._make_bika_request(url=url, params=params)
         return json.loads(resp)
 
-    def _make_query_params(self, params):
-        if 'ClientID' in params:
+    def _make_query_params(self, params, remove_client_id=True):
+        if remove_client_id and 'ClientID' in params:
             del params['ClientID']
 
         keywords_2_retrieve = ['Client', 'Service', 'SampleType', 'Contact', 'ContainerType','Category','Batch']
@@ -567,10 +577,14 @@ class BikaClient():
 
     def _make_obj_path(self, obj_type=None, params=None):
         folder = None
+        if obj_type in ["Client"]:
+            folder = 'clients'
         if obj_type in ["Batch"]:
             folder = 'batches'
         if obj_type in ['Worksheet']:
             folder = 'worksheets'
+        if obj_type in ['Contact']:
+            folder = os.path.join('clients', params.get('ClientID', ''))
         if obj_type in ['SupplyOrder']:
             folder = os.path.join('clients', params.get('ClientID', ''))
         if obj_type in ['LabProduct']:
