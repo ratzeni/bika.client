@@ -187,6 +187,23 @@ class BikaClient():
         result = self.get_worksheets(params)
         return self._format_result(result)
 
+    def query_deliveries(self, params=dict(id=None, review_state=None)):
+
+        if 'review_state' in params and params['review_state']:
+            if 'all' in [params['review_state']]:
+                params.update(dict(Subjects='draft|ready|processing|dispatched|delivered|deleted'))
+                del params['review_state']
+            else:
+                params.update(dict(Subject=params['review_state']))
+                del params['review_state']
+
+        if 'id' in params and params['id'] and isinstance(params['id'], list) and len(params['id']) > 0:
+            params.update(dict(ids="|".join(params['id'])))
+            del params['id']
+
+        result = self.get_worksheets(params)
+        return self._format_result(result)
+
     def _format_result(self, result=dict()):
         if 'objects' in result:
             return result['objects']
