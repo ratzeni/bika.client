@@ -490,6 +490,24 @@ class BikaClient():
 
         return update
 
+    def set_delivery_started(self, path):
+        params = dict(obj_path=path, subject='processing')
+        update = self.update(params=params)
+
+        return update
+
+    def set_delivery_completed(self, path):
+        params = dict(obj_path=path, subject='dispatched')
+        update = self.update(params=params)
+
+        return update
+
+    def update_delivery_details(self, path, details):
+        params = dict(obj_path=path, location=json.dumps(details))
+        update = self.update(params=params)
+
+        return update
+
     # low level methods
     def _do_action_for(self, portal_type=None, action=None, query_params=None):
         api_service = 'doActionFor'
