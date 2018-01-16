@@ -109,7 +109,8 @@ class BikaClient():
                                                  client_sample_id=None,
                                                  review_state=None,
                                                  batch_id=None,
-                                                 analysis_service_id=None)):
+                                                 analysis_service_id=None,
+                                                 run=None)):
 
         if 'review_state' in params and params['review_state']:
             if 'active' in [params['review_state']]:
@@ -140,6 +141,10 @@ class BikaClient():
         if 'analysis_service_id' in params and params['analysis_service_id']:
             result = [ar for ar in result if
                       'Analyses' in ar and params['analysis_service_id'] in [a['id'] for a in ar['Analyses']]]
+
+        if 'run' in params and params['run']:
+            result = [ar for ar in result if
+                      'Sampler' in ar and params['run'] in ar['Sampler']]
 
         return result
 
