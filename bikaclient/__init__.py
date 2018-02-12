@@ -1,21 +1,21 @@
-import os
-#import urllib
-#import urllib2
-import json
 import datetime
+import json
+import os
 
+from six import iteritems
 from six.moves.urllib.request import build_opener, HTTPCookieProcessor
 from six.moves.urllib.parse import urlencode
+from six.moves.urllib.error import URLError
 
 
-class BikaClient():
+class BikaClient:
     def __init__(self, host='http://localhost:8080/Plone', username='admin', password='secret'):
         self.__url = host
         self.__opener = build_opener(HTTPCookieProcessor())
         self.__error = False
         try:
             self.__login(username, password)
-        except:
+        except URLError:
             self.__set_error()
 
     def __login(self, username, password):
@@ -212,7 +212,8 @@ class BikaClient():
         result = self.get_worksheets(params)
         return self._format_result(result)
 
-    def _format_result(self, result=dict()):
+    @staticmethod
+    def _format_result(result=dict()):
         if 'objects' in result:
             return result['objects']
         return list()
@@ -570,7 +571,8 @@ class BikaClient():
         resp = self._make_bika_request(url=url, params=params)
         return json.loads(resp)
 
-    def _make_query_params(self, params, remove_client_id=True):
+    @staticmethod
+    def _make_query_params(params, remove_client_id=True):
         if remove_client_id and 'ClientID' in params:
             del params['ClientID']
 
@@ -614,7 +616,8 @@ class BikaClient():
                 del params[k]
         return params
 
-    def _make_action_params(self, paths=list()):
+    @staticmethod
+    def _make_action_params(paths=list()):
         f = [path for path in paths]
         return dict(f=json.dumps(f))
 
@@ -645,7 +648,8 @@ class BikaClient():
         if obj_type in ['AnalysisService']:
             folder = os.path.join('bika_setup', 'bika_analysisservices')
         if folder:
-            return '/{}'.format(os.path.join(os.path.split(self.__url)[1], folder))
+            return '/{}'.format(os.path.join(os.path.split(self.__url)[1],
+                                             folder))
         return None
 
     def _make_bika_url(self, service, is_login_service=False):
@@ -663,10 +667,11 @@ class BikaClient():
             data = json.dumps(dict(error=self.is_error()))
         return data
 
-    def _make_bika_urlencode(self, params):
+    @staticmethod
+    def _make_bika_urlencode(params):
         params_list = list()
         keys = list()
-        for key, value in params.iteritems():
+        for key, value in iteritems(params):
             if isinstance(value, list):
                 for v in value:
                     params_list.append({key: v})
@@ -678,7 +683,7 @@ class BikaClient():
         url = urlencode(params)
 
         for p in params_list:
-            for k, v in p.iteritems():
+            for k, v in iteritems(p):
                 url = "{}&{}".format(url, urlencode(v))
 
         return url
