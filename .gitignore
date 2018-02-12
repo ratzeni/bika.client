@@ -34,3 +34,6 @@ cover
 
 #Emacs
 *~
+
+#PyCharm
+*.idea
