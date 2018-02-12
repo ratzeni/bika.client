@@ -1,14 +1,17 @@
 import os
-import urllib
-import urllib2
+#import urllib
+#import urllib2
 import json
 import datetime
+
+from six.moves.urllib.request import build_opener, HTTPCookieProcessor
+from six.moves.urllib.parse import urlencode
 
 
 class BikaClient():
     def __init__(self, host='http://localhost:8080/Plone', username='admin', password='secret'):
         self.__url = host
-        self.__opener = urllib2.build_opener(urllib2.HTTPCookieProcessor())
+        self.__opener = build_opener(HTTPCookieProcessor())
         self.__error = False
         try:
             self.__login(username, password)
@@ -672,11 +675,11 @@ class BikaClient():
         for k in keys:
             del params[k]
 
-        url = urllib.urlencode(params)
+        url = urlencode(params)
 
         for p in params_list:
             for k, v in p.iteritems():
-                url = "{}&{}".format(url, urllib.urlencode(v))
+                url = "{}&{}".format(url, urlencode(v))
 
         return url
 
