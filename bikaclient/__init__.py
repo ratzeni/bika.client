@@ -2,7 +2,7 @@ import datetime
 import json
 import os
 
-import bikaclient.__version__
+from bikaclient.__version__ import __version__
 
 from six import iteritems
 from six.moves.urllib.request import build_opener, HTTPCookieProcessor
@@ -37,7 +37,7 @@ class BikaClient:
 
     @property
     def version(self):
-        return "bikaclient version {v}".format(v=bikaclient.__version__)
+        return "bikaclient version {v}".format(v=__version__)
 
     # QUERYING
     def get_clients(self, params=None):
