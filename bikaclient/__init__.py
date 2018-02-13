@@ -1,23 +1,21 @@
 import datetime
 import json
 import os
+import requests
+
 
 from bikaclient.__version__ import __version__
 
-from six import iteritems
-from six.moves.urllib.request import build_opener, HTTPCookieProcessor
-from six.moves.urllib.parse import urlencode
-from six.moves.urllib.error import URLError
-
 
 class BikaClient:
-    def __init__(self, host='http://localhost:8080/Plone', username='admin', password='secret'):
+    def __init__(self, host='http://localhost:8080/Plone', username='admin',
+                 password='secret'):
         self.__url = host
-        self.__opener = build_opener(HTTPCookieProcessor())
+        self.jar = requests.cookies.RequestsCookieJar()
         self.__error = False
         try:
             self.__login(username, password)
-        except URLError:
+        except ConnectionError:
             self.__set_error()
 
     def __login(self, username, password):
@@ -30,7 +28,8 @@ class BikaClient:
         }
         api_service = 'login_form'
         url = self._make_bika_url(service=api_service, is_login_service=True)
-        self._make_bika_request(url=url, params=params)
+        r = requests.post(url, params=params)
+        self.jar = r.cookies
 
     def is_error(self):
         return self.__error
@@ -38,6 +37,26 @@ class BikaClient:
     @property
     def version(self):
         return "bikaclient version {v}".format(v=__version__)
+
+    def _make_bika_url(self, service, is_login_service=False):
+        prefix = '@@API' if not is_login_service else ''
+        return os.path.join(self.__url, prefix, service)
+
+    def _make_bika_request(self, url, params=dict()):
+        self.__reset_error()
+        try:
+            r = requests.post(url, params=params, cookies=self.jar)
+            data = r.text
+        except ConnectionError:
+            self.__set_error()
+            data = json.dumps(dict(error=self.is_error()))
+        return data
+
+    def __reset_error(self):
+        self.__error = False
+
+    def __set_error(self):
+        self.__error = True
 
     # QUERYING
     def get_clients(self, params=None):
@@ -657,45 +676,3 @@ class BikaClient:
             return '/{}'.format(os.path.join(os.path.split(self.__url)[1],
                                              folder))
         return None
-
-    def _make_bika_url(self, service, is_login_service=False):
-        prefix = '@@API' if not is_login_service else ''
-        return os.path.join(self.__url, prefix, service)
-
-    def _make_bika_request(self, url, params=dict()):
-        self.__reset_error()
-        try:
-            f = self.__opener.open(url, self._make_bika_urlencode(params))
-            data = f.read()
-            f.close()
-        except:
-            self.__set_error()
-            data = json.dumps(dict(error=self.is_error()))
-        return data
-
-    @staticmethod
-    def _make_bika_urlencode(params):
-        params_list = list()
-        keys = list()
-        for key, value in iteritems(params):
-            if isinstance(value, list):
-                for v in value:
-                    params_list.append({key: v})
-                keys.append(key)
-
-        for k in keys:
-            del params[k]
-
-        url = urlencode(params)
-
-        for p in params_list:
-            for k, v in iteritems(p):
-                url = "{}&{}".format(url, urlencode(v))
-
-        return url
-
-    def __reset_error(self):
-        self.__error = False
-
-    def __set_error(self):
-        self.__error = True
