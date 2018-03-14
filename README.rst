@@ -10,4 +10,4 @@ You can install the latest stable version from PyPI
 
 .. code:: console
 
-   $ pip install nglimsclient
+   $ pip install bikaclient
