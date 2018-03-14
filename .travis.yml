@@ -31,5 +31,5 @@ deploy:
     secure: uw/A6puIwA3QzLcV/Zn2CNAlygkYyglsun73gyJqwH1QfvsdFX5nNB9roaQGAuKXpOmSJ8RoQkK+BZ8fzjjtFGL7Q2Xjs6r4VlIFyXuFjfqRKUMMA/lnvplUS7hUupDeZOQ9k5tZ5qFeeIrLqADAVoraHMM2HIwm8I2vJ1KRcxYv57zcN91l3KQcQc+lZmSQO1TX3UjMsk5bx3aNpFUV8vfrA72iYHmywCmJJb2o7ZHW6xzZQB9M4iJYTEuvu/Tp0zjn3gHTwGu6qkBYefCRJwJ6tJxqzd4vNE4AQZZ/lSHTsB6JAo3wfBuFwnrUrxYqSnsPazdjzk8FafVMdG+lLIKofqJCZgZ5w5Q0xLpV4M5cc+DT1LuvlTD4o1c8EL4i6f+v4Qd3XYGxA+vGWOxmUM30rVfdAv8f6GMvjVOLKg7y26IXZCrPOGbRyONZRZLZv/OW13YZbZoRsMjUn5k05bcLgmJH8dmY1qCmEOhRZLzdwHIhB+S/huSGoYAmzqq2NSe6aPJaqouKjrxevbaCLSqJ4J9lfhhc4NzlRIfdxZ2cslT4rTECLDHyhYCMvqddgbP3K83N5sql86wH3Z+PG4p/0U/DnyVCUioqIgchtI5c2XxBqUvDVKeqnwVCHED4hlp/Qfl0Co5x0AQ7YbKsfVZAEUbSwJQr0Shqf4kIS2Q=
   on:
     tags: true
-    repo: gmauro/comoda
+    repo: ratzeni/bika.client
     condition: $TRAVIS_PYTHON_VERSION = "3.5"
