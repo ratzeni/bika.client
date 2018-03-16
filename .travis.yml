@@ -3,7 +3,6 @@ python:
 - 2.7
 - 3.5
 - 3.6
-
 install:
 - sudo apt-get update
 - if [[ "$TRAVIS_PYTHON_VERSION" == "2.7" ]]; then wget https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh
@@ -19,16 +18,14 @@ install:
 - source activate test-environment
 - pip install -r requirements.txt
 - python setup.py install
-
 script:
 - make test
-
 deploy:
   provider: pypi
-  distributions: "sdist bdist_wheel"
+  distributions: sdist bdist_wheel
   user: ratzeni
   password:
-    secure: uw/A6puIwA3QzLcV/Zn2CNAlygkYyglsun73gyJqwH1QfvsdFX5nNB9roaQGAuKXpOmSJ8RoQkK+BZ8fzjjtFGL7Q2Xjs6r4VlIFyXuFjfqRKUMMA/lnvplUS7hUupDeZOQ9k5tZ5qFeeIrLqADAVoraHMM2HIwm8I2vJ1KRcxYv57zcN91l3KQcQc+lZmSQO1TX3UjMsk5bx3aNpFUV8vfrA72iYHmywCmJJb2o7ZHW6xzZQB9M4iJYTEuvu/Tp0zjn3gHTwGu6qkBYefCRJwJ6tJxqzd4vNE4AQZZ/lSHTsB6JAo3wfBuFwnrUrxYqSnsPazdjzk8FafVMdG+lLIKofqJCZgZ5w5Q0xLpV4M5cc+DT1LuvlTD4o1c8EL4i6f+v4Qd3XYGxA+vGWOxmUM30rVfdAv8f6GMvjVOLKg7y26IXZCrPOGbRyONZRZLZv/OW13YZbZoRsMjUn5k05bcLgmJH8dmY1qCmEOhRZLzdwHIhB+S/huSGoYAmzqq2NSe6aPJaqouKjrxevbaCLSqJ4J9lfhhc4NzlRIfdxZ2cslT4rTECLDHyhYCMvqddgbP3K83N5sql86wH3Z+PG4p/0U/DnyVCUioqIgchtI5c2XxBqUvDVKeqnwVCHED4hlp/Qfl0Co5x0AQ7YbKsfVZAEUbSwJQr0Shqf4kIS2Q=
+    secure: aj6+9JSXr7kBLjx+UVMZk2nKkXFjsjaddIOgZUEFMS0QphoYpOkMJ9QvKUmAERZwMWiS67lAiRRwU4eI2Iv4lqvcLK4BM06mGR3yl02TRnO3Akc432r+owOegwIDIYhZaNNFrJSLon3r/QxloAzxGl/8b3yo9GAFmRr06lUBGTlwKG1acYuCFBhwQVhyd3u+uvUEgI6QF6rgwavMAWffQku5on4gTZ6EU6/1UN3PRwypB9KeAbTANRe3w/3BCqCJDHjL+IJxjVHpudkjJMy6C7bO6+xHyP56EK+UTaeqvsc9aN3E1fXmu77Kc0rIyUzUxw/SACVhg64ivc0imVrKaFvQ2e9cQ0UDPBNpeLIuIItA/CRDA40UZD68dy6DOtaKBCDtzjfkU7qZGH3tsikWnse8cgJCq6pE3nrxDqO/LnNUrp+cKDomsvt/0pDnkuYk89Ubz30OOOGjpvzPDE5tlUxjHfC7iPoVPVfBpgKgD29JdrknXEQg+HjPpgLDcIFR+U2ulV8ythGn6CPUUDXa5c2bvF+P2jIJ6z2Yy2pRZLJYX8X4yZLTLUrKxnGZoGrOPuNXqsD3Sbl3wIGtErT667cmgs4ct+H51nn0SY3N0QJ8ZRFRKZ26J61aK6iB1cs4qPaJp+2EOjalOQIakyH7R7ruQd2JgF7KgR+DrUAgn8g=
   on:
     tags: true
     repo: ratzeni/bika.client
