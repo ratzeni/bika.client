@@ -83,6 +83,16 @@ class BikaClient:
             params.update(dict(path=self._make_obj_path(obj_type='StorageLocation')))
         return self._read(portal_type=None, query_params=params)
 
+    def get_suppliers(self, params=None):
+        if 'path' not in params:
+            params.update(dict(path=self._make_obj_path(obj_type='Supplier')))
+        return self._read(portal_type=None, query_params=params)
+
+    def get_manufacturers(self, params=None):
+        if 'path' not in params:
+            params.update(dict(path=self._make_obj_path(obj_type='Manufacturer')))
+        return self._read(portal_type=None, query_params=params)
+
     def get_artemplates(self, params=None):
         return self._read(portal_type='ARTemplate', query_params=params)
 
@@ -641,6 +651,10 @@ class BikaClient:
             folder = os.path.join('clients', params.get('ClientID', ''))
         if obj_type in ['LabProduct']:
             folder = os.path.join('bika_setup', 'bika_labproducts')
+        if obj_type in ['Supplier']:
+            folder = os.path.join('bika_setup', 'bika_suppliers')
+        if obj_type in ['Manufacturer']:
+            folder = os.path.join('bika_setup', 'bika_manufacturers')
         if obj_type in ['StorageLocation']:
             folder = os.path.join('bika_setup', 'bika_storagelocations')
         if obj_type in ['ContainerType']:
