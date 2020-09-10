@@ -1,13 +1,11 @@
-BikaClient
-======
+# BikaClient
+
 client package for Bika Open Source LIMS project
 
 
-Installation
-------------
+## Installation
 
 You can install the latest stable version from PyPI
-
-.. code:: console
-
+```bash
    $ pip install bikaclient
+```
