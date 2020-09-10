@@ -42,5 +42,7 @@ setup(name="bikaclient",
                    "Operating System :: OS Independent",
                    "Topic :: Internet",
                    "Programming Language :: Python :: 2.7",
-                   "Programming Language :: Python :: 3.5"],
-      )
+                   "Programming Language :: Python :: 3.5",
+                   "Programming Language :: Python :: 3.6",
+     ],
+)
