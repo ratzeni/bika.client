@@ -8,6 +8,7 @@ from six import iteritems
 from six.moves.urllib.request import build_opener, HTTPCookieProcessor
 from six.moves.urllib.parse import urlencode
 from six.moves.urllib.error import URLError
+from distutils.util import strtobool
 
 
 class BikaClient:
@@ -15,10 +16,20 @@ class BikaClient:
         self.__url = host
         self.__opener = build_opener(HTTPCookieProcessor())
         self.__error = False
+        self.__msg = ''
+        self.__is_authenticated = False
         try:
-            self.__login(username, password)
-        except URLError:
-            self.__set_error()
+            resp = self.__login(username, password)
+            if isinstance(resp, (bytes, bytearray)):
+                if resp.find(b"login_failed") < 0:
+                    self.__set_error('Login Failed')
+                else:
+                    self.__is_authenticated = True
+            elif isinstance(resp, dict):
+                if 'error' in resp and strtobool(resp.get('error')):
+                    self.__set_error(resp.get('msg'))
+        except Exception as e:
+            self.__set_error(str(e))
 
     def __login(self, username, password):
         params = {
@@ -30,10 +41,16 @@ class BikaClient:
         }
         api_service = 'login_form'
         url = self._make_bika_url(service=api_service, is_login_service=True)
-        self._make_bika_request(url=url, params=params)
+        return self._make_bika_request(url=url, params=params)
 
     def is_error(self):
         return self.__error
+
+    def is_authenticated(self):
+        return self.__is_authenticated
+
+    def get_error_msg(self):
+        return self.__msg
 
     @property
     def version(self):
@@ -593,7 +610,6 @@ class BikaClient:
             del params['ClientID']
 
         keywords_2_retrieve = ['Client', 'Service', 'SampleType', 'Contact', 'ContainerType','Category','Batch']
-        keywords_2_retrieve = ['Client', 'Service', 'SampleType', 'Contact', 'ContainerType','Category','Batch']
         for k in keywords_2_retrieve:
             if k in params:
                 portal_type = 'AnalysisService' if k in ['Service'] else k
@@ -682,9 +698,9 @@ class BikaClient:
             f = self.__opener.open(url, self._make_bika_urlencode(params))
             data = f.read()
             f.close()
-        except:
-            self.__set_error()
-            data = json.dumps(dict(error=self.is_error()))
+        except Exception as e:
+            self.__set_error(str(e))
+            data = json.dumps(dict(error=self.is_error(), msg=str(e)))
         return data
 
     @staticmethod
@@ -701,7 +717,7 @@ class BikaClient:
             del params[k]
 
         url = urlencode(params)
-
+        url = url.encode('utf-8')
         for p in params_list:
             for k, v in iteritems(p):
                 url = "{}&{}".format(url, urlencode(v))
@@ -710,6 +726,9 @@ class BikaClient:
 
     def __reset_error(self):
         self.__error = False
+        self.__msg = ''
 
-    def __set_error(self):
+    def __set_error(self, msg = None):
         self.__error = True
+        self.__msg = msg if msg else ''
+
