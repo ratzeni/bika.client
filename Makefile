@@ -27,5 +27,5 @@ tag:
 test:
 	@echo "test"
 
-uninstall:
+uninstall: clean
 	pip uninstall -y bikaclient
