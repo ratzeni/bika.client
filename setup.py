@@ -9,11 +9,11 @@ with open(os.path.join(here, 'VERSION')) as f:
 with open(os.path.join(here, 'requirements.txt')) as f:
     required = f.read().splitlines()
 
-with open(os.path.join(here, 'README.md')) as f:
+with open(os.path.join(here, 'README.rst')) as f:
     long_description = f.read()
 
 extra_files = [os.path.join(here, 'requirements.txt'),
-               os.path.join(here, 'README.md'),
+               os.path.join(here, 'README.rst'),
                os.path.join(here, 'VERSION'),
                ]
 
