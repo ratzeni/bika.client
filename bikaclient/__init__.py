@@ -5,7 +5,7 @@ import os
 from bikaclient.__version__ import __version__
 
 from six import iteritems
-from six.moves.urllib.request import build_opener, HTTPCookieProcessor
+from six.moves.urllib.request import Request, build_opener, HTTPCookieProcessor
 from six.moves.urllib.parse import urlencode
 from six.moves.urllib.error import URLError
 from distutils.util import strtobool
@@ -21,7 +21,7 @@ class BikaClient:
         try:
             resp = self.__login(username, password)
             if isinstance(resp, (bytes, bytearray)):
-                if resp.find(b"login_failed") < 0:
+                if resp.find(b"login_failed") > 0:
                     self.__set_error('Login Failed')
                 else:
                     self.__is_authenticated = True
@@ -57,72 +57,72 @@ class BikaClient:
         return "bikaclient version {v}".format(v=__version__)
 
     # QUERYING
-    def get_clients(self, params=None):
+    def get_clients(self, params=dict()):
         return self._read(portal_type='Client', query_params=params)
 
-    def get_contacts(self, params=None):
+    def get_contacts(self, params=dict()):
         return self._read(portal_type='Contact', query_params=params)
 
-    def get_samples(self, params=None):
+    def get_samples(self, params=dict()):
         return self._read(portal_type='Sample', query_params=params)
 
-    def get_analysis_requests(self, params=None):
+    def get_analysis_requests(self, params=dict()):
         query_params = self._make_query_params(params)
         return self._read(portal_type='AnalysisRequest', query_params=query_params)
 
-    def get_arimports(self, params=None):
+    def get_arimports(self, params=dict()):
         return self._read(portal_type='ARImport', query_params=params)
 
-    def get_batches(self, params=None):
+    def get_batches(self, params=dict()):
         query_params = self._make_query_params(params)
         return self._read(portal_type='Batch', query_params=query_params)
 
-    def get_worksheets(self, params=None):
+    def get_worksheets(self, params=dict()):
         query_params = self._make_query_params(params)
         return self._read(portal_type='Worksheet', query_params=query_params)
 
-    def get_invoices(self, params=None):
+    def get_invoices(self, params=dict()):
         return self._read(portal_type='Invoice', query_params=params)
 
-    def get_price_list(self, params=None):
+    def get_price_list(self, params=dict()):
         return self._read(portal_type='PriceList', query_params=params)
 
-    def get_supply_orders(self, params=None):
+    def get_supply_orders(self, params=dict()):
         return self._read(portal_type='SupplyOrder', query_params=params)
 
-    def get_lab_products(self, params=None):
+    def get_lab_products(self, params=dict()):
         if 'path' not in params:
             params.update(dict(path=self._make_obj_path(obj_type='LabProduct')))
         return self._read(portal_type=None, query_params=params)
 
-    def get_storage_locations(self, params=None):
+    def get_storage_locations(self, params=dict()):
         if 'path' not in params:
             params.update(dict(path=self._make_obj_path(obj_type='StorageLocation')))
         return self._read(portal_type=None, query_params=params)
 
-    def get_suppliers(self, params=None):
+    def get_suppliers(self, params=dict()):
         if 'path' not in params:
             params.update(dict(path=self._make_obj_path(obj_type='Supplier')))
         return self._read(portal_type=None, query_params=params)
 
-    def get_manufacturers(self, params=None):
+    def get_manufacturers(self, params=dict()):
         if 'path' not in params:
             params.update(dict(path=self._make_obj_path(obj_type='Manufacturer')))
         return self._read(portal_type=None, query_params=params)
 
-    def get_artemplates(self, params=None):
+    def get_artemplates(self, params=dict()):
         return self._read(portal_type='ARTemplate', query_params=params)
 
-    def get_analysis_profiles(self, params=None):
+    def get_analysis_profiles(self, params=dict()):
         return self._read(portal_type='AnalysisProfile', query_params=params)
 
-    def get_analysis_services(self, params=None):
+    def get_analysis_services(self, params=dict()):
         return self._read(portal_type='AnalysisService', query_params=params)
 
-    def get_sample_types(self, params=None):
+    def get_sample_types(self, params=dict()):
         return self._read(portal_type='SampleType', query_params=params)
 
-    def _read(self, portal_type=None, query_params=None):
+    def _read(self, portal_type=None, query_params=dict()):
         api_service = 'read'
         url = self._make_bika_url(service=api_service)
 
@@ -252,67 +252,67 @@ class BikaClient:
         return list()
 
     # CREATING
-    def create_client(self, params=None):
+    def create_client(self, params=dict()):
         obj_path = self._make_obj_path(obj_type='Client')
         query_params = self._make_query_params(params, remove_client_id=False)
         return self._create(obj_path=obj_path, obj_type='Client', query_params=query_params)
 
-    def create_contact(self, params=None):
+    def create_contact(self, params=dict()):
         obj_path = self._make_obj_path(obj_type='Contact',  params=params)
         query_params = self._make_query_params(params)
         return self._create(obj_path=obj_path, obj_type='Contact', query_params=query_params)
 
-    def create_batch(self, params=None):
+    def create_batch(self, params=dict()):
         obj_path = self._make_obj_path(obj_type='Batch')
         query_params = self._make_query_params(params)
         return self._create(obj_path=obj_path, obj_type='Batch', query_params=query_params)
 
-    def create_analysis_request(self, params=None):
+    def create_analysis_request(self, params=dict()):
         obj_path = self._make_obj_path(obj_type='AnalysisRequest')
         query_params = self._make_query_params(params)
         return self._create(obj_path=obj_path, obj_type='AnalysisRequest', query_params=query_params)
 
-    def create_worksheet(self, params=None):
+    def create_worksheet(self, params=dict()):
         obj_path = self._make_obj_path(obj_type='Worksheet')
         query_params = self._make_query_params(params)
         return self._create(obj_path=obj_path, obj_type='Worksheet', query_params=query_params)
 
-    def create_supply_order(self, params=None):
+    def create_supply_order(self, params=dict()):
         obj_path = self._make_obj_path(obj_type='SupplyOrder', params=params)
         query_params = self._make_query_params(params)
         return self._create(obj_path=obj_path, obj_type='SupplyOrder', query_params=query_params)
 
-    def create_lab_product(self, params=None):
+    def create_lab_product(self, params=dict()):
         obj_path = self._make_obj_path(obj_type='LabProduct', params=params)
         query_params = self._make_query_params(params)
         return self._create(obj_path=obj_path, obj_type='LabProduct', query_params=query_params)
 
-    def create_container_type(self, params=None):
+    def create_container_type(self, params=dict()):
         obj_path = self._make_obj_path(obj_type='ContainerType', params=params)
         query_params = self._make_query_params(params)
         return self._create(obj_path=obj_path, obj_type='ContainerType', query_params=query_params)
 
-    def create_sample_type(self, params=None):
+    def create_sample_type(self, params=dict()):
         obj_path = self._make_obj_path(obj_type='SampleType', params=params)
         query_params = self._make_query_params(params)
         return self._create(obj_path=obj_path, obj_type='SampleType', query_params=query_params)
 
-    def create_instrument_type(self, params=None):
+    def create_instrument_type(self, params=dict()):
         obj_path = self._make_obj_path(obj_type='InstrumentType', params=params)
         query_params = self._make_query_params(params)
         return self._create(obj_path=obj_path, obj_type='InstrumentType', query_params=query_params)
 
-    def create_analysis_category(self, params=None):
+    def create_analysis_category(self, params=dict()):
         obj_path = self._make_obj_path(obj_type='AnalysisCategory', params=params)
         query_params = self._make_query_params(params)
         return self._create(obj_path=obj_path, obj_type='AnalysisCategory', query_params=query_params)
 
-    def create_analysis_service(self, params=None):
+    def create_analysis_service(self, params=dict()):
         obj_path = self._make_obj_path(obj_type='AnalysisService', params=params)
         query_params = self._make_query_params(params)
         return self._create(obj_path=obj_path, obj_type='AnalysisService', query_params=query_params)
 
-    def _create(self, obj_path, obj_type, query_params=None):
+    def _create(self, obj_path, obj_type, query_params=dict()):
         api_service = 'create'
         url = self._make_bika_url(service=api_service)
 
@@ -330,10 +330,10 @@ class BikaClient:
         return json.loads(resp)
 
     # REMOVING
-    def remove(self, params=None):
+    def remove(self, params=dict()):
         return self._remove(params=params)
 
-    def _remove(self, params=None):
+    def _remove(self, params=dict()):
         api_service = 'remove'
         url = self._make_bika_url(service=api_service)
 
@@ -370,7 +370,7 @@ class BikaClient:
         query_params = self._make_query_params(params)
         return self._get_users(query_params)
 
-    def _get_users(self, query_params=None):
+    def _get_users(self, query_params=dict()):
         api_service = 'getusers'
         url = self._make_bika_url(service=api_service)
 
@@ -383,76 +383,76 @@ class BikaClient:
         return json.loads(resp)
 
     # REVIEW STATE
-    def close_batch(self, params=None):
+    def close_batch(self, params=dict()):
         return self._do_action_for_many(action='close', query_params=params)
 
-    def close_worksheet(self, params=None):
+    def close_worksheet(self, params=dict()):
         return self._do_action_for_many(action='close', query_params=params)
 
-    def open_batch(self, params=None):
+    def open_batch(self, params=dict()):
         return self._do_action_for_many(action='open', query_params=params)
 
-    def open_worksheet(self, params=None):
+    def open_worksheet(self, params=dict()):
         return self._do_action_for_many(action='open', query_params=params)
 
-    def cancel_batch(self, params=None):
+    def cancel_batch(self, params=dict()):
         return self._do_action_for_many(action='cancel', query_params=params)
 
-    def cancel_worksheet(self, params=None):
+    def cancel_worksheet(self, params=dict()):
         return self._do_action_for_many(action='cancel', query_params=params)
 
-    def cancel_analysis_request(self, params=None):
+    def cancel_analysis_request(self, params=dict()):
         return self._do_action_for_many(action='cancel', query_params=params)
 
-    def reinstate_batch(self, params=None):
+    def reinstate_batch(self, params=dict()):
         return self._do_action_for_many(action='reinstate', query_params=params)
 
-    def reinstate_worksheet(self, params=None):
+    def reinstate_worksheet(self, params=dict()):
         return self._do_action_for_many(action='reinstate', query_params=params)
 
-    def reinstate_analysis_request(self, params=None):
+    def reinstate_analysis_request(self, params=dict()):
         return self._do_action_for_many(action='reinstate', query_params=params)
 
-    def receive_sample(self, params=None):
+    def receive_sample(self, params=dict()):
         return self._do_action_for_many(action='receive', query_params=params)
 
-    def activate_supply_order(self, params=None):
+    def activate_supply_order(self, params=dict()):
         return self._do_action_for_many(action='activate', query_params=params)
 
-    def deactivate_supply_order(self, params=None):
+    def deactivate_supply_order(self, params=dict()):
         return self._do_action_for_many(action='deactivate', query_params=params)
 
-    def dispatch_supply_order(self, params=None):
+    def dispatch_supply_order(self, params=dict()):
         return self._do_action_for_many(action='dispatch', query_params=params)
 
-    def activate_lab_product(self, params=None):
+    def activate_lab_product(self, params=dict()):
         return self._do_action_for_many(action='activate', query_params=params)
 
-    def deactivate_lab_product(self, params=None):
+    def deactivate_lab_product(self, params=dict()):
         return self._do_action_for_many(action='deactivate', query_params=params)
 
-    def activate_client(self, params=None):
+    def activate_client(self, params=dict()):
         return self._do_action_for_many(action='activate', query_params=params)
 
-    def deactivate_client(self, params=None):
+    def deactivate_client(self, params=dict()):
         return self._do_action_for_many(action='deactivate', query_params=params)
 
-    def submit(self, params=None):
+    def submit(self, params=dict()):
         return self._do_action_for_many(action='submit', query_params=params)
 
-    def verify(self, params=None):
+    def verify(self, params=dict()):
         return self._do_action_for_many(action='verify', query_params=params)
 
-    def publish(self, params=None):
+    def publish(self, params=dict()):
         return self._do_action_for_many(action='publish', query_params=params)
 
-    def republish(self, params=None):
+    def republish(self, params=dict()):
         return self._do_action_for_many(action='republish', query_params=params)
 
-    def update(self, params=None):
+    def update(self, params=dict()):
         return self._update(query_params=params)
 
-    def update_many(self, params=None):
+    def update_many(self, params=dict()):
         return self._update_many(query_params=params)
 
     # HIGH LEVEL REVIEW STATE
@@ -551,7 +551,7 @@ class BikaClient:
         return update
 
     # low level methods
-    def _do_action_for(self, portal_type=None, action=None, query_params=None):
+    def _do_action_for(self, portal_type=None, action=None, query_params=dict()):
         api_service = 'doActionFor'
         url = self._make_bika_url(service=api_service)
 
@@ -568,7 +568,7 @@ class BikaClient:
         resp = self._make_bika_request(url=url, params=params)
         return json.loads(resp)
 
-    def _do_action_for_many(self, action=None, query_params=None):
+    def _do_action_for_many(self, action=None, query_params=dict()):
         api_service = 'doActionFor_many'
         url = self._make_bika_url(service=api_service)
 
@@ -653,7 +653,7 @@ class BikaClient:
         f = [path for path in paths]
         return dict(f=json.dumps(f))
 
-    def _make_obj_path(self, obj_type=None, params=None):
+    def _make_obj_path(self, obj_type=None, params=dict()):
         folder = None
         if obj_type in ["Client"]:
             folder = 'clients'
@@ -695,7 +695,9 @@ class BikaClient:
     def _make_bika_request(self, url, params=dict()):
         self.__reset_error()
         try:
-            f = self.__opener.open(url, self._make_bika_urlencode(params))
+            data = self._make_bika_urlencode(params)
+            req = Request(url, data)
+            f = self.__opener.open(req)
             data = f.read()
             f.close()
         except Exception as e:
@@ -717,12 +719,11 @@ class BikaClient:
             del params[k]
 
         url = urlencode(params)
-        url = url.encode('utf-8')
         for p in params_list:
             for k, v in iteritems(p):
                 url = "{}&{}".format(url, urlencode(v))
 
-        return url
+        return url.encode('utf-8')
 
     def __reset_error(self):
         self.__error = False

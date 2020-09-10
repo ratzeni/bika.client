@@ -3,9 +3,9 @@ VERSION=`cat VERSION`
 all:
 	@echo "Try one of: ${TARGETS}"
 
-build: clean dependencies
+build: clean
 	python setup.py sdist
-	python setup.py bdist_wheel
+	python setup.py bdist_wheel --universal
 
 clean:
 	python setup.py clean --all
@@ -15,10 +15,10 @@ clean:
 dependencies: requirements.txt
 	pip install -r requirements.txt
 
-deploy:
+deploy: build
 	twine upload dist/*
 
-install: build
+install: build dependencies
 	pip install dist/*.whl
 
 tag:
