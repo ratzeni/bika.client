@@ -1,5 +1,5 @@
 BikaClient
-======
+=============
 client package for Bika Open Source LIMS project
 
 |build|

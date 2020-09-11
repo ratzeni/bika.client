@@ -1,4 +1,4 @@
-TARGETS=build clean dependencies deploy install test uninstall
+TARGETS=build clean dependencies check deploy install test uninstall
 VERSION=`cat VERSION`
 all:
 	@echo "Try one of: ${TARGETS}"
@@ -14,6 +14,9 @@ clean:
 
 dependencies: requirements.txt
 	pip install -r requirements.txt
+
+check: build
+	twine check dist/*
 
 deploy: build
 	twine upload dist/*
